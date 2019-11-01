@@ -55,6 +55,7 @@ def long_task(self):
             message = '{0} {1} {2}...'.format(random.choice(verb),
                                               random.choice(adjective),
                                               random.choice(noun))
+        # 更新任务状态
         self.update_state(state='PROGRESS',
                           meta={'current': i, 'total': total,
                                 'status': message})
@@ -97,8 +98,10 @@ def longtask():
 
 @app.route('/status/<task_id>')
 def taskstatus(task_id):
+    """查询任务状态"""
     task = long_task.AsyncResult(task_id)
     if task.state == 'PENDING':
+        # 准备中
         response = {
             'state': task.state,
             'current': 0,
@@ -106,6 +109,7 @@ def taskstatus(task_id):
             'status': 'Pending...'
         }
     elif task.state != 'FAILURE':
+        # 失败
         response = {
             'state': task.state,
             'current': task.info.get('current', 0),
